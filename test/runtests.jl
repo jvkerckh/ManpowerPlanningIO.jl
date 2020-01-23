@@ -16,6 +16,7 @@ tStart = now()
 
 include( "base.jl" )
 include( "attrition.jl" )
+include( "attribute.jl" )
 
 end  # @testset "Excel configuration tests"
 
