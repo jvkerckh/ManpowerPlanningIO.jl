@@ -1,15 +1,20 @@
 using Dates
+using ManpowerPlanning
 using ManpowerPlanningIO
 using Test
+using XLSX
 
 versionMPIO()
 println()
+
+MPsim = ManpowerSimulation
+MPIO = ManpowerPlanningIO
 
 tStart = now()
 
 @testset "Excel configuration tests" begin
 
-@test true
+include( "baseTest.jl" )
 
 end  # @testset "Excel configuration tests"
 
