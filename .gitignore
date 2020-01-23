@@ -26,3 +26,4 @@ Manifest.toml
 src/unprocessed*
 test/default*
 test/base/baseConfig/*
+*.~lock.*

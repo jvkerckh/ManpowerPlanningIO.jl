@@ -14,7 +14,8 @@ tStart = now()
 
 @testset "Excel configuration tests" begin
 
-include( "baseTest.jl" )
+include( "base.jl" )
+include( "attrition.jl" )
 
 end  # @testset "Excel configuration tests"
 

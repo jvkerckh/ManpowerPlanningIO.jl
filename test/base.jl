@@ -8,7 +8,7 @@
     mpSim, isOkay = initialiseFromExcel( joinpath( "base", "baseConfig1" ) )
     @test !isOkay
 
-    initialiseFromExcel( joinpath( "base", "baseConfig" ), showInfo = false )
+    # initialiseFromExcel( joinpath( "base", "baseConfig" ), showInfo = false )
 
 end  # @testset "Base Excel configuration tests"
 
@@ -20,7 +20,7 @@ end  # @testset "Base Excel configuration tests"
 
     XLSX.openxlsx( fileName ) do xf
         @test MPIO.readDBpars( mpSim, xf[ "General" ], filePath ) == "Excel"
-    end  # XLSX.openXLSX() do xf
+    end  # XLSX.openXLSX( fileName ) do xf
 
     @test mpSim.dbName == joinpath( "base", "baseConfig", "simDB.sqlite" )
     @test mpSim.simName == "sim"
@@ -33,7 +33,7 @@ end  # @testset "Database parameter test"
 
     XLSX.openxlsx( fileName ) do xf
         MPIO.readGeneralPars( mpSim, xf[ "General" ], filePath )
-    end  # XLSX.openXLSX() do xf
+    end  # XLSX.openXLSX( fileName ) do xf
 
     @test mpSim.catFileName == joinpath( "base", "catalogue.xlsx" )
     @test mpSim.personnelTarget == 0

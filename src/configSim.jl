@@ -40,6 +40,11 @@ function initialiseFromExcel( mpSim::MPsim, fileName::String;
 
         # Read general parameters.
         readGeneralPars( mpSim, xf[ "General" ], filePath )
+
+        XLSX.openxlsx( mpSim.catFileName ) do catXF
+            # Read attrition schemes.
+            readAttritionSchemes( mpSim, catXF )
+        end  # XLSX.openxlsx( mpSim.catFileName ) do catXF
     end  # XLSX.openxlsx( fileName ) do xf
 
     return isOkay
