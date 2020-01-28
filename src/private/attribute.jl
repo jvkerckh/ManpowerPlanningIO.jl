@@ -1,7 +1,7 @@
 function readAttributes( mpSim::MPsim, xf::XF, catXF::XF )
 
     if !XLSX.hassheet( xf, "Attributes" )
-        @warn "CConfiguration file is missing an 'Attributes' sheet, cannot confiugre attributes."
+        @warn "Configuration file is missing an 'Attributes' sheet, cannot configure attributes."
         return
     end  # if !XLSX.hassheet( xf, "Attributes" )
 
@@ -17,8 +17,6 @@ function readAttributes( mpSim::MPsim, xf::XF, catXF::XF )
         attributes = readAttribute.( Ref( ws ), lineNrs )
     end  # if XLSX.hassheet( catXF, "Attributes" )
 
-    filter!( attribute -> attribute[ 2 ], attributes )
-    attributes = map( attribute -> attribute[ 1 ], attributes )
     setSimulationAttributes!( mpSim, attributes )
 
 end  # readAttributes( mpSim, xf, catXF )
@@ -27,32 +25,32 @@ end  # readAttributes( mpSim, xf, catXF )
 function readAttribute( ws::WS, catalogue::WS, sLine::Int )
 
     # Read the attribute's initial values.
-    attribute, isOkay = readAttribute( ws, sLine )
+    attribute = readAttribute( ws, sLine )
 
     # If it's in the catalogue, read the attribute's possible values.
     cLine = ws[ sLine, 2 ]
 
     if !( cLine isa Integer ) || ( cLine <= 0 )
-        return attribute, isOkay
+        return attribute
     end  # if !( cLine isa Integer ) || ...
 
     cLine += 1
 
     if string( catalogue[ cLine, 1 ] ) != attribute.name
-        return attribute, isOkay
+        return attribute
     end  # if string( catalogue[ cLine, 1 ] != attribute.name
 
     nValues = catalogue[ cLine, 5 ]
     
     if !( nValues isa Integer ) || ( nValues <= 0 )
-        return attribute, isOkay
+        return attribute
     end  # if !( nValues isa Integer ) || ...
 
     values = String.( strip.( string.( catalogue[ CR( cLine, 6, cLine,
         5 + nValues ) ] ) ) )
-    isOkay &= addPossibleAttributeValue!( attribute, values... )
+    addPossibleAttributeValue!( attribute, values... )
 
-    return attribute, isOkay
+    return attribute
 
 end  # readAttribute( ws, catalogue, sLine )
 
@@ -81,8 +79,7 @@ function readAttribute( ws::WS, sLine::Int )
         end  # if weights[ ii ] isa Real
     end  # for ii in 1:nInitialValues
 
-    isOkay = setInitialAttributeValues!( attribute, initialValues )
-
-    return attribute, isOkay
+    setInitialAttributeValues!( attribute, initialValues )
+    return attribute
 
 end  # readAttribute( ws, sLine )

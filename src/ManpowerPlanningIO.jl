@@ -6,7 +6,7 @@ module ManpowerPlanningIO
     using SQLite
     using XLSX
 
-    version = v"0.1.3"
+    version = v"0.1.4"
 
     export versionMPIO
     versionMPIO() = @info string( "Running version ", version,
@@ -23,5 +23,6 @@ module ManpowerPlanningIO
     include( joinpath( privPath, "base.jl" ) )
     include( joinpath( privPath, "attrition.jl" ) )
     include( joinpath( privPath, "attribute.jl" ) )
+    include( joinpath( privPath, "basenode.jl" ) )
 
 end # module ManpowerPlanningIO
