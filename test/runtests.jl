@@ -18,6 +18,7 @@ include( "base.jl" )
 include( "attrition.jl" )
 include( "attribute.jl" )
 include( "basenode.jl" )
+include( "compoundnode.jl" )
 
 end  # @testset "Excel configuration tests"
 

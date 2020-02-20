@@ -44,7 +44,8 @@ function initialiseFromExcel( mpSim::MPsim, fileName::String;
         XLSX.openxlsx( mpSim.catFileName ) do catXF
             readAttritionSchemes( mpSim, catXF )
             readAttributes( mpSim, xf, catXF )
-            readBaseNodes( mpSim, xf, catFX )
+            readBaseNodes( mpSim, xf, catXF )
+            readCompoundNodes( mpSim, xf, catXF)
         end  # XLSX.openxlsx( mpSim.catFileName ) do catXF
     end  # XLSX.openxlsx( fileName ) do xf
 
