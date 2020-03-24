@@ -21,7 +21,6 @@ function readTransitions( mpSim::MPsim, xf::XF )
     end  # if !XLSX.hassheet( xf, "Transition types" )
 
     readRecruitment( mpSim, xf )
-    readRecruitment( mpSim, xf )
     readTransitionsThrough( mpSim, xf )
     readTransitionsOut( mpSim, xf )
 

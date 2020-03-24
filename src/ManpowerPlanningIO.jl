@@ -7,7 +7,7 @@ module ManpowerPlanningIO
     using XLSX
 
     MP = ManpowerPlanning
-    version = v"0.1.6"
+    version = v"0.1.7"
 
     export versionMPIO
     versionMPIO() = @info string( "Running version ", version,
@@ -28,5 +28,6 @@ module ManpowerPlanningIO
     include( joinpath( privPath, "compoundnode.jl" ) )
     include( joinpath( privPath, "recruitment.jl" ) )
     include( joinpath( privPath, "transition.jl" ) )
+    include( joinpath( privPath, "retirement.jl" ) )
 
 end # module ManpowerPlanningIO
