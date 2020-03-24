@@ -6,12 +6,13 @@ module ManpowerPlanningIO
     using SQLite
     using XLSX
 
-    version = v"0.1.5"
+    MP = ManpowerPlanning
+    version = v"0.1.6"
 
     export versionMPIO
     versionMPIO() = @info string( "Running version ", version,
-        " of ManpowerPlanningIO module (ManpowerPlanning v",
-        ManpowerPlanning.version, ") in Julia v", VERSION )
+        " of ManpowerPlanningIO module (ManpowerPlanning v", MP.version,
+        ") in Julia v", VERSION )
 
     MPsim = ManpowerSimulation
     CR = XLSX.CellRange
@@ -25,5 +26,7 @@ module ManpowerPlanningIO
     include( joinpath( privPath, "attribute.jl" ) )
     include( joinpath( privPath, "basenode.jl" ) )
     include( joinpath( privPath, "compoundnode.jl" ) )
+    include( joinpath( privPath, "recruitment.jl" ) )
+    include( joinpath( privPath, "transition.jl" ) )
 
 end # module ManpowerPlanningIO
