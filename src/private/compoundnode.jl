@@ -227,3 +227,31 @@ function readCustomNodes!( mpSim::MPsim, ws::WS )
     end  # for ii in eachindex( nodeNames )
 
 end  # readCustomNodes!( mpSim::MPsim, ws::WS )
+
+
+function readCompoundNodes( mpSim::MPsim, configDB::SQLite.DB,
+    configName::String )
+
+    nodePars = DataFrame( SQLite.Query( configDB,
+        string( "SELECT * FROM `", configName,
+        "` WHERE parType IS 'Compound Node'" ) ) )
+
+    nodes = map( eachindex( nodePars[ :parName ] ) ) do ii
+        node = CompoundNode( nodePars[ ii, :parName ] )
+        pars = split( nodePars[ ii, :parValue ], ";" )
+
+        if length( pars[ 1 ] ) > 2
+            setCompoundNodeComponents!( node, string.(
+                split( pars[ 1 ][ 2:(end-1) ], "," ) ) )
+        end  # if length( pars[ 1 ] ) > 2
+
+        if tryparse( Int, pars[ 2 ] ) isa Int
+            setCompoundNodeTarget!( node, parse( Int, pars[ 2 ] ) )
+        end  # if tryparse( Int, pars[ 2 ] ) isa Int
+
+        return node
+    end  # map( eachindex( nodePars[ :parName ] ) ) do ii
+
+    setSimulationCompoundNodes!( mpSim, nodes )
+
+end  # readCompoundNodes( mpSim, configDB, configName )

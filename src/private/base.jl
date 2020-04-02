@@ -93,10 +93,6 @@ function readGeneralPars( mpSim::MPsim, ws::WS, filePath::String )
         setSimulationPersonnelTarget!( mpSim, ws[ "B6" ] )
     end  # if ws[ "B6" ] isa Integer
 
-    # if !isa( sheet[ "B7" ], Missings.Missing )
-    #     setSimStartDate( mpSim, sheet[ "B7" ] )
-    # end  # if !isa( sheet[ "B7" ], Missings.Missing )
-
     if ws[ "B8" ] isa Real
         setSimulationLength!( mpSim, ws[ "B8" ] * 12.0 )
     end  # if ws[ "B8" ] isa Real
@@ -104,3 +100,62 @@ function readGeneralPars( mpSim::MPsim, ws::WS, filePath::String )
     # setDatabaseCommitTime( mpSim, sheet[ "B8" ] * 12.0 / sheet[ "B9" ] )
     
 end  # readGeneralPars( mpSim, ws, filePath )
+
+function readGeneralPars( mpSim::MPsim, configDB::SQLite.DB,
+    configName::String )
+
+    generalPars = DataFrame( SQLite.Query( configDB, string( "SELECT * FROM `",
+        configName, "` WHERE parType IS 'General'" ) ) )
+
+    parInds = map( [ "Sim name", "ID key", "Personnel target", "Sim length",
+        "Current time", "DB commits" ] ) do parName
+        return findfirst( parName .== generalPars[ :parName ] )
+    end  # map( ... ) do parName
+
+    # Read simulation name.
+    if parInds[ 1 ] isa Int
+        setSimulationName!( mpSim, generalPars[ parInds[ 1 ], :parValue ] )
+    end  # if parInds[ 1 ] isa Int
+
+    # Read ID key.
+    if parInds[ 2 ] isa Int
+        setSimulationKey!( mpSim, generalPars[ parInds[ 2 ], :parValue ] )
+    end  # if parInds[ 2 ] isa Int
+
+    # Read global personnel target.
+    if parInds[ 3 ] isa Int
+        parVal = tryparse( Int, generalPars[ parInds[ 3 ], :parValue ] )
+        
+        if parVal isa Int
+            setSimulationPersonnelTarget!( mpSim, parVal )
+        end  # if parval isa Int
+    end  # if parInds[ 3 ] isa Int
+
+    # Read simulation length.
+    if parInds[ 4 ] isa Int
+        parVal = tryparse( Float64, generalPars[ parInds[ 4 ], :parValue ] )
+        
+        if parVal isa Float64
+            setSimulationLength!( mpSim, parVal )
+        end  # if parval isa Float64
+    end  # if parInds[ 4 ] isa Int
+
+    # Read current simulation time.
+    if parInds[ 5 ] isa Int
+        parVal = tryparse( Float64, generalPars[ parInds[ 5 ], :parValue ] )
+        
+        if ( parVal isa Float64 ) && ( parVal > 0.0 )
+            run( mpSim.sim, parVal )
+        end  # if parval isa Float64
+    end  # if parInds[ 5 ] isa Int
+    
+    # Read number of database commits.
+    if parInds[ 6 ] isa Int
+        parVal = tryparse( Int, generalPars[ parInds[ 6 ], :parValue ] )
+        
+        if parVal isa Int
+            # setSimulationPersonnelTarget!( mpSim, parVal )
+        end  # if parval isa Int
+    end  # if parInds[ 6 ] isa Int
+
+end  # readGeneralPars( mpSim, configDB, configName )

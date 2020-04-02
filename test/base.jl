@@ -1,5 +1,4 @@
 @testset "Base Excel configuration tests" begin
-
     # File doesn't exist.
     mpSim, isOkay = initialiseFromExcel( joinpath( "base", "baseConfig0" ) )
     @test !isOkay
@@ -9,7 +8,6 @@
     @test !isOkay
 
     # initialiseFromExcel( joinpath( "base", "baseConfig" ), showInfo = false )
-
 end  # @testset "Base Excel configuration tests"
 
 

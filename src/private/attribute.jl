@@ -83,3 +83,38 @@ function readAttribute( ws::WS, sLine::Int )
     return attribute
 
 end  # readAttribute( ws, sLine )
+
+
+function readAttributes( mpSim::MPsim, configDB::SQLite.DB,
+    configName::String )
+
+    attributePars = DataFrame( SQLite.Query( configDB,
+        string( "SELECT * FROM `", configName,
+        "` WHERE parType IS 'Attribute'" ) ) )
+
+    attributes = map( eachindex( attributePars[ :parName ] ) ) do ii
+        attribute = Attribute( attributePars[ ii, :parName ] )
+        pars = split( attributePars[ ii, :parValue ], ";" )
+
+        if length( pars[ 1 ] ) > 2
+            setPossibleAttributeValues!( attribute, string.(
+                split( pars[ 1 ][ 2:(end-1) ], "," ) ) )
+        end  # if length( pars[ 1 ] ) > 2
+        
+        if length( pars[ 2 ] ) > 2
+            initVals = split.( split( pars[ 2 ][ 2:(end-1) ], "," ), ":" )
+            initValDict = Dict{String, Float64}()
+
+            for initVal in initVals
+                initValDict[ initVal[ 1 ] ] = parse( Float64, initVal[ 2 ] )
+            end  # for initVal in initVals
+
+            setInitialAttributeValues!( attribute, initValDict )
+        end  # if length( pars[ 2 ] ) > 2
+
+        return attribute
+    end  # map( eachindex( attributePars[ :parName ] ) ) do ii
+
+    setSimulationAttributes!( mpSim, attributes )
+
+end  # readAttributes( mpSim, configDB, configName )

@@ -7,7 +7,7 @@ module ManpowerPlanningIO
     using XLSX
 
     MP = ManpowerPlanning
-    version = v"0.1.7"
+    version = v"0.2.0"
 
     export versionMPIO
     versionMPIO() = @info string( "Running version ", version,

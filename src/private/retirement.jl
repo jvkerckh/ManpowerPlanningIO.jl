@@ -23,3 +23,39 @@ function readRetirement( mpSim::MPsim, xf::XF )
     setSimulationRetirement!( mpSim, retirement )
 
 end  # readRetirement( mpSim, xf )
+
+
+function readRetirement( mpSim::MPsim, configDB::SQLite.DB,
+    configName::String )
+
+    retirePars = DataFrame( SQLite.Query( configDB,
+        string( "SELECT * FROM `", configName,
+        "` WHERE parType IS 'Retirement'" ) ) )
+    
+    if !isempty( retirePars )
+        retirement = Retirement()
+        pars = split( retirePars[ 1, :parValue ], ";" )
+
+        if ( tryparse( Float64, pars[ 1 ] ) isa Float64 ) &&
+            ( tryparse( Float64, pars[ 2 ] ) isa Float64 )
+            setRetirementSchedule!( retirement, parse( Float64, pars[ 1 ] ),
+                parse( Float64, pars[ 2 ] ) )
+        end  # if ( tryparse( Float64, pars[ 1 ] ) isa Float64 ) && ...
+
+        if tryparse( Float64, pars[ 3 ] ) isa Float64
+            setRetirementCareerLength!( retirement,
+                parse( Float64, pars[ 3 ] ) )
+        end  # if tryparse( Float64, pars[ 3 ] ) isa Float64
+
+        if tryparse( Float64, pars[ 4 ] ) isa Float64
+            setRetirementAge!( retirement, parse( Float64, pars[ 4 ] ) )
+        end  # if tryparse( Float64, pars[ 4 ] ) isa Float64
+
+        if tryparse( Bool, pars[ 5 ] ) isa Bool
+            setRetirementIsEither!( retirement, parse( Bool, pars[ 5 ] ) )
+        end  # if tryparse( Bool, pars[ 5 ] ) isa Bool
+
+        setSimulationRetirement!( mpSim, retirement )
+    end  # if !isempty( retirePars )
+
+end  # readRetirement( mpSim, configDB, configName )

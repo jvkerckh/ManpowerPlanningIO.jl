@@ -12,6 +12,7 @@ MPIO = ManpowerPlanningIO
 
 tStart = now()
 
+#=
 @testset "Excel configuration tests" begin
 
 include( "base.jl" )
@@ -24,6 +25,13 @@ include( "transition.jl" )
 include( "retirement.jl" )
 
 end  # @testset "Excel configuration tests"
+=#
+
+@testset "Database configuration tests" begin
+
+include( "db/complete.jl" )
+
+end  # @testset "Database configuration tests" begin
 
 tElapsed = ( now() - tStart ).value / 1000
 @info string( "Unit tests completed in ", tElapsed, " seconds." )

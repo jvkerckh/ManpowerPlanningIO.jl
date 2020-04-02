@@ -89,3 +89,54 @@ function readBaseNode( ws::WS, sLine::Int )
     return node
 
 end  # function readBaseNode( ws, sLine )
+
+
+function readBaseNodes( mpSim::MPsim, configDB::SQLite.DB,
+    configName::String )
+
+    nodePars = DataFrame( SQLite.Query( configDB,
+        string( "SELECT * FROM `", configName,
+        "` WHERE parType IS 'Base Node'" ) ) )
+
+    nodes = map( eachindex( nodePars[ :parName ] ) ) do ii
+        node = BaseNode( nodePars[ ii, :parName ] )
+        pars = split( nodePars[ ii, :parValue ], ";" )
+
+        if tryparse( Int, pars[ 1 ] ) isa Int
+            setNodeTarget!( node, parse( Int, pars[ 1 ] ) )
+        end  # if tryparse( Int, pars[ 1 ] )
+
+        setNodeAttritionScheme!( node, string( pars[ 2 ] ) )
+
+        if length( pars[ 3 ] ) > 2
+            nodeReqs = split.( split( pars[ 3 ][ 2:(end-1) ], "," ), ":" )
+            nodeReqDict = Dict{String, String}()
+
+            for nodeReq in nodeReqs
+                nodeReqDict[ nodeReq[ 1 ] ] = nodeReq[ 2 ]
+            end  # for nodeReq in nodeReqs
+
+            setNodeRequirements!( node, nodeReqDict )
+        end  # if length( pars[ 3 ] ) > 2
+
+        return node
+    end  # map( eachindex( nodePars[ :parName ] ) ) do ii
+
+    setSimulationBaseNodes!( mpSim, nodes )
+
+    nodeOrder = DataFrame( SQLite.Query( configDB,
+        string( "SELECT * FROM `", configName,
+        "` WHERE parType IS 'Base Node Order'" ) ) )
+
+    if !isempty( nodeOrder ) && ( length( nodeOrder[ 1, :parValue ] ) > 2 )
+        order = split.( split( nodeOrder[ 1, :parValue ], ";" ), ":" )
+        orderDict = Dict{String, Int}()
+
+        for orderPair in order
+            orderDict[ orderPair[ 1 ] ] = parse( Int, orderPair[ 2 ] )
+        end  # for orderPair in order
+
+        setSimulationBaseNodeOrder!( mpSim, orderDict )
+    end  # if !isempty( nodeOrder ) && ...
+
+end  # readBaseNodes( mpSim, configDB, configName )

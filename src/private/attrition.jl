@@ -40,3 +40,34 @@ function readAttritionScheme( ws::WS, sLine::Int )
     return attrition
 
 end  # readAttritionScheme( ws, sLine )
+
+
+function readAttritionSchemes( mpSim::MPsim, configDB::SQLite.DB,
+    configName::String )
+
+    attritionPars = DataFrame( SQLite.Query( configDB,
+        string( "SELECT * FROM `", configName,
+        "` WHERE parType IS 'Attrition'" ) ) )
+
+    attritionSchemes = map( eachindex( attritionPars[ :parName ] ) ) do ii
+        attrition = Attrition( attritionPars[ ii, :parName ] )
+        pars = split( attritionPars[ ii, :parValue ], ";" )
+
+        setAttritionPeriod!( attrition, parse( Float64, pars[ 1 ] ) )
+
+        curve = split.( split( pars[ 2 ][ 2:(end-1) ], "," ), ":" )
+        curveDict = Dict{Float64, Float64}()
+
+        for curvePoint in curve
+            curveDict[ parse( Float64, curvePoint[ 1 ] ) ] =
+                parse( Float64, curvePoint[ 2 ] )
+        end  # for curvePoint in curve
+
+        setAttritionCurve!( attrition, curveDict )
+
+        return attrition
+    end  # map( eachindex( attritionPars[ :parName ] ) ) do ii
+
+    setSimulationAttrition!( mpSim, attritionSchemes )
+
+end  # readAttritionSchemes( mpSim, configDB, configName )

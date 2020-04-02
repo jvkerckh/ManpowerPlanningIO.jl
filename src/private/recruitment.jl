@@ -113,3 +113,57 @@ function readRecruitment( mpSim::MPsim, xf::XF )
     end  # for dataColNr in (1:nTrans) * 5 .- 3
 
 end  # readRecruitment( mpSim, xf )
+
+
+function readRecruitment( mpSim::MPsim, configDB::SQLite.DB,
+    configName::String )
+
+    recruitPars = DataFrame( SQLite.Query( configDB,
+        string( "SELECT * FROM `", configName,
+        "` WHERE parType IS 'Recruitment'" ) ) )
+    
+    recruitmentSchemes = map( eachindex( recruitPars[ :parName ] ) ) do ii
+        recruitment = Recruitment( recruitPars[ ii, :parName ] )
+        pars = split( recruitPars[ ii, :parValue ], ";" )
+
+        if ( tryparse( Float64, pars[ 1 ] ) isa Float64 ) &&
+            ( tryparse( Float64, pars[ 2 ] ) isa Float64 )
+            setRecruitmentSchedule!( recruitment, parse( Float64, pars[ 1 ] ),
+                parse( Float64, pars[ 2 ] ) )
+        end  # if ( tryparse( Float64, pars[ 1 ] ) isa Float64 ) && ...
+
+        setRecruitmentTarget!( recruitment, string( pars[ 3 ] ) )
+
+        if tryparse( Int, pars[ 4 ] ) isa Int
+            if tryparse( Int, pars[ 5 ] ) isa Int
+                setRecruitmentAdaptiveRange!( recruitment,
+                    parse( Int, pars[ 4 ] ), parse( Int, pars[ 5 ] ) )
+            end  # if tryparse( Int, pars[ 5 ] ) isa Int
+        else
+            dist = split.( split( pars[ 5 ][ 2:(end-1) ], "," ), ":" )
+            distDict = Dict{Int, Float64}()
+
+            for curvePoint in dist
+                distDict[ parse( Int, curvePoint[ 1 ] ) ] =
+                    parse( Float64, curvePoint[ 2 ] )
+            end  # for curvePoint in dist
+
+            setRecruitmentDist!( recruitment, Symbol( pars[ 4 ] ), distDict )
+        end  # if tryparse( Int, recruitment ) isa Int
+
+        dist = split.( split( pars[ 7 ][ 2:(end-1) ], "," ), ":" )
+        distDict = Dict{Float64, Float64}()
+
+        for curvePoint in dist
+            distDict[ parse( Float64, curvePoint[ 1 ] ) ] =
+                parse( Float64, curvePoint[ 2 ] )
+        end  # for curvePoint in dist
+
+        setRecruitmentAgeDist!( recruitment, Symbol( pars[ 6 ] ), distDict )
+
+        return recruitment
+    end  # map( eachindex( recruitPars[ :parName ] ) ) do ii
+
+    setSimulationRecruitment!( mpSim, recruitmentSchemes )
+
+end  # readRecruitment( mpSim, configDB, configName )
