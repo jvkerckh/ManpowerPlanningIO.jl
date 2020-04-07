@@ -26,4 +26,5 @@ Manifest.toml
 src/unprocessed*
 test/default*
 test/base/baseConfig/*
+test/report/*.xlsx
 *.~lock.*

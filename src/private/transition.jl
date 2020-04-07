@@ -270,7 +270,8 @@ function readTransitions( mpSim::MPsim, configDB::SQLite.DB,
                 if length( condPars ) == 3
                     attrVal = tryparse( Float64, condPars[ 3 ] )
                     attrVal = attrVal isa Nothing ? string( condPars[ 3 ] ) :
-                        attrVal
+                        attrVal / 12.0
+                        # To ensure proper reading of conditions.
                 else
                     attrVal = join( condPars[ 3:end ], "," )
                 end  # if length( condPars ) == 3
