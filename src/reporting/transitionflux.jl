@@ -1,7 +1,9 @@
 export  excelFluxReport
 
 
-function excelFluxReport( mpSim::MPsim, timeGrid::Vector{T}, transitions::MP.TransitionType...; filename::AbstractString = "fluxReport", overwrite::Bool = true, timeFactor::Real = 12.0 ) where T <: Real
+function excelFluxReport( mpSim::MPsim, timeGrid::Vector{T},
+    transitions::MP.TransitionType...; filename::AbstractString = "fluxReport",
+    overwrite::Bool = true, timeFactor::Real = 12.0 ) where T <: Real
 
     if !endswith( filename, ".xlsx" )
         filename = string( filename, ".xlsx" )

@@ -53,13 +53,13 @@ function readDBpars( mpSim::MPsim, ws::WS, filePath::String )
     setSimulationDatabase!( mpSim, tmpDBname )
     
     # ! This line ensures that foreign key logic works.
-    SQLite.execute!( mpSim.simDB, "PRAGMA foreign_keys = ON" )
+    DBInterface.execute( mpSim.simDB, "PRAGMA foreign_keys = ON" )
 
     simName = ws[ "B5" ] isa Missing ? "simulation" : string( ws[ "B5" ] )
     setSimulationName!( mpSim, simName )
 
     # Check if databases are present and issue a warning if so.
-    dbTableList = SQLite.tables( mpSim.simDB )[ :name ]
+    dbTableList = get( SQLite.tables( mpSim.simDB ), :name, Vector{String}() )
 
     if ( mpSim.persDBname ∈ dbTableList ) ||
         ( mpSim.histDBname ∈ dbTableList ) ||
@@ -104,12 +104,17 @@ end  # readGeneralPars( mpSim, ws, filePath )
 function readGeneralPars( mpSim::MPsim, configDB::SQLite.DB,
     configName::String )
 
-    generalPars = DataFrame( SQLite.Query( configDB, string( "SELECT * FROM `",
-        configName, "` WHERE parType IS 'General'" ) ) )
+    generalPars = DataFrame( DBInterface.execute( configDB,
+        string( "SELECT * FROM `", configName,
+        "` WHERE parType IS 'General'" ) ) )
+
+    if isempty( generalPars )
+        return
+    end  # if isempty( generalPars )
 
     parInds = map( [ "Sim name", "ID key", "Personnel target", "Sim length",
         "Current time", "DB commits" ] ) do parName
-        return findfirst( parName .== generalPars[ :parName ] )
+        return findfirst( parName .== generalPars[ :, :parName ] )
     end  # map( ... ) do parName
 
     # Read simulation name.

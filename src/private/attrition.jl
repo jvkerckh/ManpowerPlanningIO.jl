@@ -45,11 +45,15 @@ end  # readAttritionScheme( ws, sLine )
 function readAttritionSchemes( mpSim::MPsim, configDB::SQLite.DB,
     configName::String )
 
-    attritionPars = DataFrame( SQLite.Query( configDB,
+    attritionPars = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Attrition'" ) ) )
 
-    attritionSchemes = map( eachindex( attritionPars[ :parName ] ) ) do ii
+    if isempty( attritionPars )
+        return
+    end  # if isempty( attritionPars )
+
+    attritionSchemes = map( eachindex( attritionPars[ :, :parName ] ) ) do ii
         attrition = Attrition( attritionPars[ ii, :parName ] )
         pars = split( attritionPars[ ii, :parValue ], ";" )
 

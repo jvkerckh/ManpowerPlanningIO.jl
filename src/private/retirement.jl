@@ -28,7 +28,7 @@ end  # readRetirement( mpSim, xf )
 function readRetirement( mpSim::MPsim, configDB::SQLite.DB,
     configName::String )
 
-    retirePars = DataFrame( SQLite.Query( configDB,
+    retirePars = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Retirement'" ) ) )
     

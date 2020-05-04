@@ -88,11 +88,15 @@ end  # readAttribute( ws, sLine )
 function readAttributes( mpSim::MPsim, configDB::SQLite.DB,
     configName::String )
 
-    attributePars = DataFrame( SQLite.Query( configDB,
+    attributePars = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Attribute'" ) ) )
 
-    attributes = map( eachindex( attributePars[ :parName ] ) ) do ii
+    if isempty( attributePars )
+        return
+    end  # if isempty( attributePars )
+
+    attributes = map( eachindex( attributePars[ :, :parName ] ) ) do ii
         attribute = Attribute( attributePars[ ii, :parName ] )
         pars = split( attributePars[ ii, :parValue ], ";" )
 

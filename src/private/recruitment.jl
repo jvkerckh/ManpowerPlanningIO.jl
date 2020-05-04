@@ -118,11 +118,15 @@ end  # readRecruitment( mpSim, xf )
 function readRecruitment( mpSim::MPsim, configDB::SQLite.DB,
     configName::String )
 
-    recruitPars = DataFrame( SQLite.Query( configDB,
+    recruitPars = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Recruitment'" ) ) )
+
+    if isempty( recruitPars )
+        return
+    end  # if isempty( recruitPars )
     
-    recruitmentSchemes = map( eachindex( recruitPars[ :parName ] ) ) do ii
+    recruitmentSchemes = map( eachindex( recruitPars[ :, :parName ] ) ) do ii
         recruitment = Recruitment( recruitPars[ ii, :parName ] )
         pars = split( recruitPars[ ii, :parValue ], ";" )
 

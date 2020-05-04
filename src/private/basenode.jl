@@ -94,37 +94,39 @@ end  # function readBaseNode( ws, sLine )
 function readBaseNodes( mpSim::MPsim, configDB::SQLite.DB,
     configName::String )
 
-    nodePars = DataFrame( SQLite.Query( configDB,
+    nodePars = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Base Node'" ) ) )
 
-    nodes = map( eachindex( nodePars[ :parName ] ) ) do ii
-        node = BaseNode( nodePars[ ii, :parName ] )
-        pars = split( nodePars[ ii, :parValue ], ";" )
+    if !isempty( nodePars )
+        nodes = map( eachindex( nodePars[ :, :parName ] ) ) do ii
+            node = BaseNode( nodePars[ ii, :parName ] )
+            pars = split( nodePars[ ii, :parValue ], ";" )
 
-        if tryparse( Int, pars[ 1 ] ) isa Int
-            setNodeTarget!( node, parse( Int, pars[ 1 ] ) )
-        end  # if tryparse( Int, pars[ 1 ] )
+            if tryparse( Int, pars[ 1 ] ) isa Int
+                setNodeTarget!( node, parse( Int, pars[ 1 ] ) )
+            end  # if tryparse( Int, pars[ 1 ] )
 
-        setNodeAttritionScheme!( node, string( pars[ 2 ] ) )
+            setNodeAttritionScheme!( node, string( pars[ 2 ] ) )
 
-        if length( pars[ 3 ] ) > 2
-            nodeReqs = split.( split( pars[ 3 ][ 2:(end-1) ], "," ), ":" )
-            nodeReqDict = Dict{String, String}()
+            if length( pars[ 3 ] ) > 2
+                nodeReqs = split.( split( pars[ 3 ][ 2:(end-1) ], "," ), ":" )
+                nodeReqDict = Dict{String, String}()
 
-            for nodeReq in nodeReqs
-                nodeReqDict[ nodeReq[ 1 ] ] = nodeReq[ 2 ]
-            end  # for nodeReq in nodeReqs
+                for nodeReq in nodeReqs
+                    nodeReqDict[ nodeReq[ 1 ] ] = nodeReq[ 2 ]
+                end  # for nodeReq in nodeReqs
 
-            setNodeRequirements!( node, nodeReqDict )
-        end  # if length( pars[ 3 ] ) > 2
+                setNodeRequirements!( node, nodeReqDict )
+            end  # if length( pars[ 3 ] ) > 2
 
-        return node
-    end  # map( eachindex( nodePars[ :parName ] ) ) do ii
+            return node
+        end  # map( eachindex( nodePars[ :parName ] ) ) do ii
 
-    setSimulationBaseNodes!( mpSim, nodes )
+        setSimulationBaseNodes!( mpSim, nodes )
+    end  # if !isempty( nodePars )
 
-    nodeOrder = DataFrame( SQLite.Query( configDB,
+    nodeOrder = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Base Node Order'" ) ) )
 

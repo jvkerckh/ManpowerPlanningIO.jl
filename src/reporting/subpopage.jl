@@ -88,22 +88,6 @@ function excelSubpopAgeReport( mpSim::MPsim, timeGrid::Vector{T}, ageRes::Real,
         ws[ "B3" ] = excelGenerationTime
     end  # XLSX.openxlsx( ... ) do xf
 
-    #=
-
-        nrows, ncols = size( subpopReport )
-        ii = 0
-        
-        for name in names( subpopReport )
-            ii += 1
-            ws[ 5, ii ] = string( name )
-
-            for jj in 1:nrows
-                ws[ jj + 5, ii ] = subpopReport[ jj, ii ]
-            end  # for jj in 1:nrows
-        end  # for ii in 1:ncols
-
-        =#
-
 end  # excelSubpopAgeReport( mpSim, timeGrid, ageRes, ageType, nodes, filename,
      #   overwrite, timeFactor )
 

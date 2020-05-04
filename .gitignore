@@ -27,4 +27,5 @@ src/unprocessed*
 test/default*
 test/base/baseConfig/*
 test/report/*.xlsx
+test/plot/*.svg
 *.~lock.*

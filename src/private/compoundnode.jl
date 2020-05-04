@@ -232,11 +232,15 @@ end  # readCustomNodes!( mpSim::MPsim, ws::WS )
 function readCompoundNodes( mpSim::MPsim, configDB::SQLite.DB,
     configName::String )
 
-    nodePars = DataFrame( SQLite.Query( configDB,
+    nodePars = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Compound Node'" ) ) )
 
-    nodes = map( eachindex( nodePars[ :parName ] ) ) do ii
+    if isempty( nodePars )
+        return
+    end  # if isempty( nodePars )
+
+    nodes = map( eachindex( nodePars[ :, :parName ] ) ) do ii
         node = CompoundNode( nodePars[ ii, :parName ] )
         pars = split( nodePars[ ii, :parValue ], ";" )
 

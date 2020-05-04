@@ -234,78 +234,84 @@ end  # processCondition( attribute, operator, value )
 function readTransitions( mpSim::MPsim, configDB::SQLite.DB,
     configName::String )
 
-    transitionPars = DataFrame( SQLite.Query( configDB,
+    transitionPars = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Transition'" ) ) )
 
-    transitions = map( eachindex( transitionPars[ :parName ] ) ) do ii
-        pars = string.( split( transitionPars[ ii, :parValue ], ";" ) )
-        transition = uppercase( pars[ 2 ] ) == "OUT" ?
-            Transition( transitionPars[ ii, :parName ], pars[ 1 ] ) :
-            Transition( transitionPars[ ii, :parName ], pars[ 1 ], pars[ 2 ] )
-        
-        if ( tryparse( Float64, pars[ 3 ] ) isa Float64 ) &&
-            ( tryparse( Float64, pars[ 4 ] ) isa Float64 )
-            setTransitionSchedule!( transition, parse( Float64, pars[ 3 ] ),
-                parse( Float64, pars[ 4 ] ) )
-        end  # if ( tryparse( Float64, pars[ 3 ] ) isa Float64 ) && ...
+    if !isempty( transitionPars )
+        transitions = map( eachindex( transitionPars[ :, :parName ] ) ) do ii
+            pars = string.( split( transitionPars[ ii, :parValue ], ";" ) )
+            transition = uppercase( pars[ 2 ] ) == "OUT" ?
+                Transition( transitionPars[ ii, :parName ], pars[ 1 ] ) :
+                Transition( transitionPars[ ii, :parName ], pars[ 1 ],
+                    pars[ 2 ] )
+            
+            if ( tryparse( Float64, pars[ 3 ] ) isa Float64 ) &&
+                ( tryparse( Float64, pars[ 4 ] ) isa Float64 )
+                setTransitionSchedule!( transition, parse( Float64, pars[ 3 ] ),
+                    parse( Float64, pars[ 4 ] ) )
+            end  # if ( tryparse( Float64, pars[ 3 ] ) isa Float64 ) && ...
 
-        if tryparse( Int, pars[ 5 ] ) isa Int
-            setTransitionMaxAttempts!( transition, parse( Int, pars[ 5 ] ) )
-        end  # if tryparse( Int, pars[ 5 ] ) isa Int
+            if tryparse( Int, pars[ 5 ] ) isa Int
+                setTransitionMaxAttempts!( transition, parse( Int, pars[ 5 ] ) )
+            end  # if tryparse( Int, pars[ 5 ] ) isa Int
 
-        if ( tryparse( Int, pars[ 6 ] ) isa Int ) &&
-            ( tryparse( Int, pars[ 7 ] ) isa Int )
-            setTransitionFluxLimits!( transition, parse( Int, pars[ 6 ] ),
-                parse( Int, pars[ 7 ] ) )
-        end  # if ( tryparse( Int, pars[ 6 ] ) isa Int ) && ...
+            if ( tryparse( Int, pars[ 6 ] ) isa Int ) &&
+                ( tryparse( Int, pars[ 7 ] ) isa Int )
+                setTransitionFluxLimits!( transition, parse( Int, pars[ 6 ] ),
+                    parse( Int, pars[ 7 ] ) )
+            end  # if ( tryparse( Int, pars[ 6 ] ) isa Int ) && ...
 
-        if tryparse( Bool, pars[ 8 ] ) isa Bool
-            setTransitionHasPriority!( transition, parse( Bool, pars[ 8 ] ) )
-        end  # if tryparse( Bool, pars[ 8 ] ) isa Bool
+            if tryparse( Bool, pars[ 8 ] ) isa Bool
+                setTransitionHasPriority!( transition,
+                    parse( Bool, pars[ 8 ] ) )
+            end  # if tryparse( Bool, pars[ 8 ] ) isa Bool
 
-        if length( pars[ 9 ] ) > 2
-            conditionPars = split.( split( pars[ 9 ][ 2:(end-1) ], "," ), ":" )
-            conditions = map( conditionPars ) do condPars
-                if length( condPars ) == 3
-                    attrVal = tryparse( Float64, condPars[ 3 ] )
-                    attrVal = attrVal isa Nothing ? string( condPars[ 3 ] ) :
-                        attrVal / 12.0
-                        # To ensure proper reading of conditions.
-                else
-                    attrVal = join( condPars[ 3:end ], "," )
-                end  # if length( condPars ) == 3
+            if length( pars[ 9 ] ) > 2
+                conditionPars = split.( split( pars[ 9 ][ 2:(end-1) ], "," ),
+                    ":" )
+                conditions = map( conditionPars ) do condPars
+                    if length( condPars ) == 3
+                        attrVal = tryparse( Float64, condPars[ 3 ] )
+                        attrVal = attrVal isa Nothing ?
+                            string( condPars[ 3 ] ) : attrVal / 12.0
+                            # To ensure proper reading of conditions.
+                    else
+                        attrVal = join( condPars[ 3:end ], "," )
+                    end  # if length( condPars ) == 3
 
-                condition, isOkay = processCondition( string( condPars[ 1 ] ),
-                    string( condPars[ 2 ] ), attrVal )
-                return condition
-            end  # map( conditionPars ) do condPars
+                    condition, isOkay = processCondition(
+                        string( condPars[ 1 ] ), string( condPars[ 2 ] ),
+                        attrVal )
+                    return condition
+                end  # map( conditionPars ) do condPars
 
-            setTransitionConditions!( transition, conditions )
-        end  # if length( pars[ 9 ] ) > 2
+                setTransitionConditions!( transition, conditions )
+            end  # if length( pars[ 9 ] ) > 2
 
-        if length( pars[ 10 ] ) > 2
-            changes = split.( split( pars[ 10 ][ 2:(end-1) ], "," ), ":" )
-            changesDict = Dict{String, String}()
+            if length( pars[ 10 ] ) > 2
+                changes = split.( split( pars[ 10 ][ 2:(end-1) ], "," ), ":" )
+                changesDict = Dict{String, String}()
 
-            for change in changes
-                changesDict[ change[ 1 ] ] = change[ 2 ]
-            end  # for nodeReq in nodeReqs
+                for change in changes
+                    changesDict[ change[ 1 ] ] = change[ 2 ]
+                end  # for nodeReq in nodeReqs
 
-            setTransitionAttributeChanges!( transition, changesDict )
-        end  # if length( pars[ 10 ] ) > 2
+                setTransitionAttributeChanges!( transition, changesDict )
+            end  # if length( pars[ 10 ] ) > 2
 
-        if length( pars[ 11 ] ) > 2
-            setTransitionProbabilities!( transition,
-                parse.( Float64, split( pars[ 11 ][ 2:(end-1) ] ) ) )
-        end  # if length( pars[ 11 ] ) > 2
+            if length( pars[ 11 ] ) > 2
+                setTransitionProbabilities!( transition,
+                    parse.( Float64, split( pars[ 11 ][ 2:(end-1) ] ) ) )
+            end  # if length( pars[ 11 ] ) > 2
 
-        return transition
-    end  # map( eachindex( transitionPars[ :parName ] ) ) do ii
+            return transition
+        end  # map( eachindex( transitionPars[ :parName ] ) ) do ii
 
-    setSimulationTransitions!( mpSim, transitions )
+        setSimulationTransitions!( mpSim, transitions )
+    end  # if !isempty( transitionPars )
 
-    transOrder = DataFrame( SQLite.Query( configDB,
+    transOrder = DataFrame( DBInterface.execute( configDB,
         string( "SELECT * FROM `", configName,
         "` WHERE parType IS 'Transition Order'" ) ) )
 

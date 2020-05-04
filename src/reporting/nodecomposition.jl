@@ -1,7 +1,7 @@
-export  excelPopCompositionReport
+export  excelNodeCompositionReport
 
 
-function excelPopCompositionReport( mpSim::MPsim, timeGrid::Vector{T},
+function excelNodeCompositionReport( mpSim::MPsim, timeGrid::Vector{T},
     nodes::AbstractString...; filename::AbstractString = "compReport",
     overwrite::Bool = true, timeFactor::Real = 12.0 ) where T <: Real
 
@@ -75,12 +75,12 @@ function excelPopCompositionReport( mpSim::MPsim, timeGrid::Vector{T},
         ws[ "B3" ] = excelGenerationTime
     end  # XLSX.openxlsx( ... ) do xf
 
-end  # excelPopCompositionReport( mpSim, timeGrid, nodes, filename, overwrite,
+end  # excelNodeCompositionReport( mpSim, timeGrid, nodes, filename, overwrite,
      #   timeFactor )
 
-excelPopCompositionReport( mpSim::MPsim, timeRes::Real,
+excelNodeCompositionReport( mpSim::MPsim, timeRes::Real,
     nodes::AbstractString...; filename::AbstractString = "compReport",
     overwrite::Bool = true, timeFactor::Real = 12.0 ) =
-    excelPopCompositionReport( mpSim, MP.generateTimeGrid( mpSim, timeRes ),
+    excelNodeCompositionReport( mpSim, MP.generateTimeGrid( mpSim, timeRes ),
     nodes...; filename = filename, overwrite = overwrite,
     timeFactor = timeFactor )
