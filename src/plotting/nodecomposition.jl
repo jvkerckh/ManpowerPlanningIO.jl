@@ -35,7 +35,7 @@ function nodeCompositionPlot( mpSim::MPsim, timeGrid::Vector{T},
             extension = "svg"
         else
             extension = split( filename, "." )
-            fileroot = length( extension ) == 1 ? extension[1] :
+            fileroot = length( extension ) == 1 ? string( extension[1] ) :
                 join( extension[1:(end - 1)], "." )
             extension = length( extension ) == 1 ? "" : extension[end]
             extension = extension ∈ extensions ? extension : "svg"
@@ -46,25 +46,8 @@ function nodeCompositionPlot( mpSim::MPsim, timeGrid::Vector{T},
         end  # if !ispath( dirname( fileroot ) )
     end  # if savePlot
 
-    # Generate plots.
-    for node in unique( nodes )
-        if !haskey( compReport, node )
-            continue
-        end  # if !haskey( compReport, node )
-
-        plotfilename = string( fileroot, " ", node, ".", extension )
-        plt = plotFunction( compReport[node], string( node ), timeFactor )
-
-        # Show plot if needed.
-        if showPlot
-            gui( plt )
-        end  # if showPlot
-
-        # Save plot if needed.
-        if savePlot
-            savefig( plt, plotfilename )
-        end  # if savePlot
-    end  # for node in unique( nodes )
+    generateCompPlot( compReport, nodes, timeFactor, showPlot, savePlot,
+        fileroot, extension, plotFunction )
 
 end  # nodeCompositionPlot( mpSim, timeGrid, nodes, plotType, showPlot,
      #   savePlot, filename, timeFactor )

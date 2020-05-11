@@ -41,31 +41,15 @@ function nodeFluxPlot( mpSim::MPsim, timeGrid::Vector{T}, fluxType::Symbol,
             extension = extension ∈ extensions ? extension : "svg"
         end  # if filename == ""
 
+        fileroot = string( fileroot )
+
         if !ispath( dirname( fileroot ) )
             mkpath( dirname( fileroot ) )
         end  # if !ispath( dirname( fileroot ) )
     end  # if savePlot
 
-    # Generate plots.
-    for node in unique( nodes )
-        if !haskey( fluxReport, node )
-            continue
-        end  # if !haskey( fluxReport, node )
-
-        plotfilename = string( fileroot, " ", node, ".", extension )
-        plt = plotFunction( fluxReport[node], string( node ), fluxType,
-            timeFactor )
-
-        # Show plot if needed.
-        if showPlot
-            gui( plt )
-        end  # if showPlot
-
-        # Save plot if needed.
-        if savePlot
-            savefig( plt, plotfilename )
-        end  # if savePlot
-    end  # for node in unique( nodes )
+    generateNodeFluxPlot( fluxReport, nodes, fluxType, timeFactor, showPlot,
+        savePlot, fileroot, extension, plotFunction )
 
 end  # nodeFluxPlot( mpSim, timeGrid, fluxType, nodes, plotType, showPlot,
      #   savePlot, filename, timeFactor )

@@ -7,11 +7,11 @@ module ManpowerPlanningIO
     using ManpowerPlanning
     using Plots
     using SQLite
-    using WebIO
+    # using WebIO
     using XLSX
 
     MP = ManpowerPlanning
-    version = v"0.4.0"
+    version = v"0.5.0"
 
     export versionMPIO
     versionMPIO() = @info string( "Running version ", version,
@@ -36,5 +36,6 @@ module ManpowerPlanningIO
     include( joinpath( privPath, "retirement.jl" ) )
     include( "reporting/excelreports.jl" )
     include( "plotting/simulationplots.jl" )
+    include( "excelrequest/exceloutputrequests.jl" )
 
 end # module ManpowerPlanningIO

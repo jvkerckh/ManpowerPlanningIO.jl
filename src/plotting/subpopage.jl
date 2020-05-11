@@ -94,37 +94,6 @@ function subpopAgePlot( mpSim::MPsim, timeGrid::Vector{T}, ageRes::Real,
         end  # if savePlot
     end  # for subpop in filter( ..., subpops )
 
-    # plotTitle = string( "Subpopulation ", ageTypeString, " plot" )
-    # plotData = Matrix( ageReport[:, 2:end] )
-    # labels = hcat( string.( names( ageReport )[2:end] )... )
-    # ymax = maximum( plotData )
-    
-    # plt = plot( ageReport[:, :timePoint] / timeFactor, plotData,
-    #     size=(960, 540), title=plotTitle, labels=labels, lw=2, ylim=[0, ymax] )
-
-    # # Show plot if needed.
-    # if showPlot
-    #     gui( plt )
-    # end  # if showPlot
-    
-    # # Save plot if needed.
-    # if savePlot
-    #     # If the user doesn't specify a filename, a random one is generated.
-    #     if filename == ""
-    #         dateStr = Dates.format( now(), "yyyymmdd HHMMSS" )
-    #         filename = string( "Subpopulation plot  ", dateStr )
-    #     end  # if filename == ""
-
-    #     if !ispath( dirname( filename ) )
-    #         mkpath( dirname( filename ) )
-    #     end  # if !ispath( dirname( filename ) )
-
-    #     extension = split( filename, "." )
-    #     extension = length( extension ) == 1 ? "" : extension[end]
-    #     filename = string( filename, extension ∈ extensions ? "" : ".svg" )
-    #     savefig( plt, filename )
-    # end  # if savePlot
-
 end  # subpopAgePlot( mpSim, timeGrid, ageRes, ageType, subpops, showPlot,
      #   savePlot, fileName, timeFactor )
 

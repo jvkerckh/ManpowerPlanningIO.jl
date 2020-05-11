@@ -23,7 +23,7 @@ function subpopPlot( mpSim::MPsim, timeGrid::Vector{T},
     plotTitle = string( "Subpopulation plot" )
     plotData = Matrix( subpopReport[:, 2:end] )
     labels = hcat( string.( names( subpopReport )[2:end] )... )
-    ymax = maximum( plotData )
+    ymax = max( maximum( plotData ), 20 )
     
     plt = plot( subpopReport[:, :timePoint] / timeFactor, plotData,
         size=(960, 540), title=plotTitle, labels=labels, lw=2, ylim=[0, ymax] )

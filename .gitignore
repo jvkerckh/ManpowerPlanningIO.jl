@@ -28,4 +28,6 @@ test/default*
 test/base/baseConfig/*
 test/report/*.xlsx
 test/plot/*.svg
+test/excelrequest/plotRequest/*.svg
+test/excelrequest/plotRequest/*.xlsx
 *.~lock.*

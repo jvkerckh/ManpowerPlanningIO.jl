@@ -41,6 +41,8 @@ include( "report/simprep.jl" )
 
 @testset "Simulation report tests" begin
 
+rm.( string.( "report/", filter( fname -> endswith( fname, ".xlsx" ),
+    readdir( "report" ) ) ) )
 include( "report/transitionflux.jl" )
 include( "report/nodeflux.jl" )
 include( "report/nodepop.jl" )
@@ -52,16 +54,25 @@ end  # @testset "Simulation report tests"
 
 @testset "Simulation plot tests" begin
 
+rm.( string.( "plot/", filter( fname -> endswith( fname, ".svg" ),
+    readdir( "plot" ) ) ) )
 include( "plot/transitionflux.jl" )
 include( "plot/nodeflux.jl" )
 include( "plot/nodepop.jl" )
 include( "plot/nodecomposition.jl" )
 include( "plot/subpop.jl" )
 
-rm.( string.( "plot/", filter( fname -> endswith( fname, ".svg" ),
-    readdir( "plot" ) ) ) )
 
 end  # @testset "Simulation plot tests"
+
+
+@testset "Excel plot request tests" begin
+
+rm( "excelrequest/plotRequest", recursive=true, force=true )
+include( "excelrequest/transitionflux.jl" )
+include( "excelrequest/nodepop.jl" )
+
+end  # @testset "Excel plot request tests"
 
 end  # @testset "Manpower Simulation I/O tests"
 
