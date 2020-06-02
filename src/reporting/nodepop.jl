@@ -6,14 +6,7 @@ function excelPopReport( mpSim::MPsim, timeGrid::Vector{T},
     nodes::AbstractString...; filename::AbstractString = "popReport",
     overwrite::Bool = true, timeFactor::Real = 12.0 ) where T <: Real
 
-    if !endswith( filename, ".xlsx" )
-        filename = string( filename, ".xlsx" )
-    end  # if !endswith( filename, ".xlsx" )
-
-    if !( overwrite || ispath( filename ) )
-        overwrite = true
-    end  # if !( overwrite || ispath( filename ) )
-
+    filename, overwrite = setupFile( filename, overwrite )
     tStart = now()
     popReport = nodePopReport( mpSim, timeGrid, nodes... )
     reportGenerationTime = ( now() - tStart ).value / 1000.0
@@ -38,14 +31,7 @@ function excelPopEvolutionReport( mpSim::MPsim, timeGrid::Vector{T},
     nodes::AbstractString...; filename::AbstractString = "popReport",
     overwrite::Bool = true, timeFactor::Real = 12.0 ) where T <: Real
 
-    if !endswith( filename, ".xlsx" )
-        filename = string( filename, ".xlsx" )
-    end  # if !endswith( filename, ".xlsx" )
-
-    if !( overwrite || ispath( filename ) )
-        overwrite = true
-    end  # if !( overwrite || ispath( filename ) )
-
+    filename, overwrite = setupFile( filename, overwrite )
     tStart = now()
     popReport = nodeEvolutionReport( mpSim, timeGrid, nodes... )
     reportGenerationTime = ( now() - tStart ).value / 1000.0

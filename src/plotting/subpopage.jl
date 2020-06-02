@@ -22,8 +22,7 @@ function subpopAgePlot( mpSim::MPsim, timeGrid::Vector{T}, ageRes::Real,
         return
     end  # if isempty( ageReport ) || ...
 
-    ageTypeString = ageType === :timeInnode ? "time in current node" :
-        string( ageType )
+    ageTypeString = ageTypesS[ageType]
 
     # Get file name ready.
     if savePlot

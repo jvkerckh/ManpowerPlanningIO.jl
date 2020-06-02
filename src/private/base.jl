@@ -79,7 +79,6 @@ function readGeneralPars( mpSim::MPsim, ws::WS, filePath::String )
     catalogueName = ws[ "B3" ] isa Missing ? "" : string( ws[ "B3" ] )
     catalogueName = string( catalogueName,
         endswith( catalogueName, ".xlsx" ) ? "" : ".xlsx" )
-
     catalogueName = normpath( joinpath( filePath, "..", catalogueName ) )
 
     if !ispath( catalogueName )

@@ -16,5 +16,4 @@
 
     @test ( length( mpSim.recruitmentByName ) == 1 ) &&
         ( length( mpSim.recruitmentByTarget ) == 3 )
-
 end  # @testset "Recruitment configuration tests"

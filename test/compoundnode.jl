@@ -13,5 +13,4 @@
     end  # XLSX.openxlsx( fileName ) do xf
 
     @test length( mpSim.compoundNodeList ) == 12
-
 end  # @testset "Compound node configuration tests"

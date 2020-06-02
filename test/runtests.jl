@@ -25,6 +25,7 @@ include( "compoundnode.jl" )
 include( "recruitment.jl" )
 include( "transition.jl" )
 include( "retirement.jl" )
+include( "initpop.jl" )
 
 end  # @testset "Excel configuration tests"
 
@@ -48,6 +49,7 @@ include( "report/nodeflux.jl" )
 include( "report/nodepop.jl" )
 include( "report/nodecomposition.jl" )
 include( "report/subpop.jl" )
+include( "report/initpop.jl" )
 
 end  # @testset "Simulation report tests"
 
@@ -61,7 +63,7 @@ include( "plot/nodeflux.jl" )
 include( "plot/nodepop.jl" )
 include( "plot/nodecomposition.jl" )
 include( "plot/subpop.jl" )
-
+include( "plot/initpop.jl" )
 
 end  # @testset "Simulation plot tests"
 
@@ -71,6 +73,7 @@ end  # @testset "Simulation plot tests"
 rm( "excelrequest/plotRequest", recursive=true, force=true )
 include( "excelrequest/transitionflux.jl" )
 include( "excelrequest/nodepop.jl" )
+include( "excelrequest/initpop.jl" )
 
 end  # @testset "Excel plot request tests"
 

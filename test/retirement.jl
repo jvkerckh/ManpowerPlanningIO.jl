@@ -12,5 +12,4 @@
     @test ( mpSim.retirement.maxCareerLength == 120 ) &&
         ( mpSim.retirement.retirementAge == 360 )
     @test mpSim.retirement.isEither
-
 end  # @testset "Recruitment configuration tests"

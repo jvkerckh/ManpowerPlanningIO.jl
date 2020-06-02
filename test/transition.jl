@@ -20,5 +20,4 @@
     @test ( length( mpSim.transitionsByName ) == 4 ) &&
         ( length( mpSim.transitionsBySource ) == 6 ) &&
         ( length( mpSim.transitionsByTarget ) == 4 )
-
 end  # @testset "Transition configuration tests"

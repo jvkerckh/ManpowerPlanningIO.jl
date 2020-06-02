@@ -6,14 +6,7 @@ function excelSubpopAgeReport( mpSim::MPsim, timeGrid::Vector{T}, ageRes::Real,
     filename::AbstractString = "compReport", overwrite::Bool = true,
     timeFactor::Real = 12.0 ) where T <: Real
 
-    if !endswith( filename, ".xlsx" )
-        filename = string( filename, ".xlsx" )
-    end  # if !endswith( filename, ".xlsx" )
-
-    if !( overwrite || ispath( filename ) )
-        overwrite = true
-    end  # if !( overwrite || ispath( filename ) )
-
+    filename, overwrite = setupFile( filename, overwrite )
     tStart = now()
     ageReport = subpopulationAgeReport( mpSim, timeGrid, ageRes, ageType,
         subpops... )
