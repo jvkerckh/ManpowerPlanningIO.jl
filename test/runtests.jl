@@ -1,6 +1,7 @@
 using Dates
 using ManpowerPlanning
 using ManpowerPlanningIO
+using Plots
 using Test
 using XLSX
 
@@ -30,6 +31,13 @@ include( "initpop.jl" )
 end  # @testset "Excel configuration tests"
 
 
+@testset "Excel run tests" begin
+
+include( "randomseed.jl" )
+
+end  # @testset "Excel run tests"
+
+
 @testset "Database configuration tests" begin
 
 include( "db/complete.jl" )
@@ -55,6 +63,8 @@ end  # @testset "Simulation report tests"
 
 
 @testset "Simulation plot tests" begin
+
+gui( plot() )
 
 rm.( string.( "plot/", filter( fname -> endswith( fname, ".svg" ),
     readdir( "plot" ) ) ) )

@@ -5,8 +5,8 @@ function generateInitialPopPlot( report::DataFrame, showPlot::Bool,
     initSize = sum( report[:, 2] )
     hoverValues = string.( report[:, 1], ": ", report[:, 2], " (",
         round.( 100.0 * report[:, 2] / initSize, digits=2 ), "%)" )
-    plt = pie( report[:, 1], report[:, 2], size=(960,540), title=plotTitle,
-        hover=hoverValues )
+    plt = pie( report[:, 1], report[:, 2], show=false, size=(960,540),
+        title=plotTitle, hover=hoverValues )
 
     # Show plot if needed.
     if showPlot
@@ -48,7 +48,7 @@ function generateInitialPopAgePlot( report::DataFrame, timeFactor::Float64, show
     plotData = report[1:(end-5), 2]
     ymax = max( maximum( plotData ), 20 )
 
-    plt = bar( ages, plotData, size=(960, 540), title=plotTitle,
+    plt = bar( ages, plotData, show=false, size=(960, 540), title=plotTitle,
         bar_width=length( ages ) == 1 ? .5 : ages[2] - ages[1], labels=nothing,
         ylim=[0, ymax], fa=0.5 )
     plt = vline!( [report[(end-4), 2] / timeFactor], labels="mean", lw=2,

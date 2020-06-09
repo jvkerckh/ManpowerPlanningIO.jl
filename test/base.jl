@@ -6,8 +6,6 @@
     # Excel file has no General tab.
     mpSim, isOkay = initialiseFromExcel( joinpath( "base", "baseConfig1" ) )
     @test !isOkay
-
-    # initialiseFromExcel( joinpath( "base", "baseConfig" ), showInfo = false )
 end  # @testset "Base Excel configuration tests"
 
 

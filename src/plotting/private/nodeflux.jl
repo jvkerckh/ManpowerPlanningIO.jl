@@ -1,7 +1,33 @@
 function generateNodeFluxPlot( fluxReport::Dict{String,DataFrame},
     nodes::NTuple{N,String}, fluxType::Symbol, timeFactor::Float64,
-    showPlot::Bool, savePlot::Bool, fileroot::String, extension::String,
+    showPlot::Bool, savePlot::Bool, filename::String,
     plotFunction::Function ) where N
+
+    fileroot = nothing
+    extension = nothing
+
+    # Get file name ready.
+    if savePlot
+        # If the user doesn't specify a filename, a random one is generated.
+        if filename == ""
+            dateStr = Dates.format( now(), "yyyymmdd HHMMSS" )
+            fileroot = string( string( "Node flux plot (", dateStr, ")",
+                labelInfix[:fluxType] ) )
+            extension = "svg"
+        else
+            extension = split( filename, "." )
+            fileroot = length( extension ) == 1 ? extension[1] :
+                join( extension[1:(end - 1)], "." )
+            extension = length( extension ) == 1 ? "" : extension[end]
+            extension = extension ∈ extensions ? extension : "svg"
+        end  # if filename == ""
+
+        fileroot = string( fileroot )
+
+        if !ispath( dirname( fileroot ) )
+            mkpath( dirname( fileroot ) )
+        end  # if !ispath( dirname( fileroot ) )
+    end  # if savePlot
 
     # Generate plots.
     for node in unique( nodes )
@@ -44,11 +70,11 @@ function normalFluxPlot( fluxReport::DataFrame, node::String, fluxType::Symbol,
     if fluxType === :within
         ymax = size( dataPoints, 2 ) == 1 ? 20 :
             max( maximum( dataPoints[:, 2:end] ), 20 )
-        plt = plot( size=(960, 540), title=plotTitle, label=labels[1], lw=3,
-            color=:black, ylim=[0, ymax] )
+        plt = plot( show=false, size=(960, 540), title=plotTitle,
+            label=labels[1], lw=3, color=:black, ylim=[0, ymax] )
     else
         ymax = max( maximum( dataPoints[:, 1] ), 20 )
-        plt = plot( timePoints, dataPoints[:, 1], size=(960, 540),
+        plt = plot( timePoints, dataPoints[:, 1], show=false, size=(960, 540),
             title=plotTitle, label=labels[1], lw=3, color=:black,
             ylim=[0, ymax] )
     end  # if fluxType === :within
@@ -73,7 +99,7 @@ function stackedFluxPlot( fluxReport::DataFrame, node::String, fluxType::Symbol,
     dataPoints = hcat( fill( 0, nPoints ), cumsum( dataPoints, dims=2 ) )
     ymax = max( maximum( fluxReport[:, 3] ), 20 )
 
-    plt = plot( size=(960,540), title=plotTitle, ylim=[0, ymax] )
+    plt = plot( show=false, size=(960,540), title=plotTitle, ylim=[0, ymax] )
 
     for ii in 1:nSeries
         plot!( plt, timePoints, dataPoints[:, ii + 1], lw=2, lalpha=1.0, fillto=dataPoints[:, ii], falpha=0.5, label=labels[ii] )

@@ -6,7 +6,7 @@ function generateTransFluxPlot( fluxReport::DataFrame, timeFactor::Float64, show
     labels = hcat( string.( names( fluxReport )[3:end] )... )
     ymax = max( maximum( plotData ), 20 )
 
-    plt = plot( fluxReport[:, :timePoint] / timeFactor, plotData,
+    plt = plot( fluxReport[:, :timePoint] / timeFactor, plotData, show=false,
         size=(960, 540), title=plotTitle, label=labels, lw=2, ylim=[0, ymax] )
 
     # Show plot if needed.

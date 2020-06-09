@@ -1,6 +1,3 @@
-const extensions = ["svg", "html", "png"]
-
-
 include( "transitionflux.jl" )
 include( "nodeflux.jl" )
 include( "nodepop.jl" )
@@ -10,6 +7,7 @@ include( "subpopage.jl" )
 include( "initpop.jl" )
 
 
+const extensions = ["svg", "html", "png"]
 const plotTypes = Dict{Symbol,NTuple{2,Function}}(
     :normal => (normalFluxPlot, normalCompPlot),
     :stacked => (stackedFluxPlot, stackedCompPlot) )

@@ -47,7 +47,6 @@ function subpopAgePlot( mpSim::MPsim, timeGrid::Vector{T}, ageRes::Real,
     
     # Generate the plot.
     for subpop in filter( subpop -> haskey( ageReport, subpop.name ), subpops )
-        plotfilename = string( fileroot, " ", subpop.name, ".", extension )
         report = ageReport[subpop.name]
 
         plotTitle = string( "Subpopulation ", subpop.name, ", ", ageTypeString,
@@ -89,6 +88,7 @@ function subpopAgePlot( mpSim::MPsim, timeGrid::Vector{T}, ageRes::Real,
 
         # Save plot if needed.
         if savePlot
+            plotfilename = string( fileroot, " ", subpop.name, ".", extension )
             savefig( plt, plotfilename )
         end  # if savePlot
     end  # for subpop in filter( ..., subpops )

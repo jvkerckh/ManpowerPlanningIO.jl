@@ -133,11 +133,12 @@ function excelPopPlot( mpSim::MPsim, filename::AbstractString,
                 end  # if isempty( compReport )
 
                 plotFunction = plotTypes[plotkey[3]][2]
-                plotname = string( plotdir, "/node composition", dateStr )
+                plotname = string( plotdir, "/node composition", dateStr,
+                    ".svg" )
 
                 if makePlot
                     generateCompPlot( compReport, nodes, 12.0, plotkey[4],
-                        plotkey[5], plotname, "svg", plotFunction )
+                        plotkey[5], plotname, plotFunction )
                 end  # if makePlot
 
                 if makeReport
@@ -158,12 +159,12 @@ function excelPopPlot( mpSim::MPsim, filename::AbstractString,
 
             plotFunction = plotTypes[plotkey[2]][1]
             plotFunction2 = plotTypes[plotkey[2]][2]
-            plotname = string( plotdir, "/node evolution", dateStr )
+            plotname = string( plotdir, "/node evolution", dateStr, ".svg" )
 
             if makePlot
                 generateEvolutionPlot( popReport, mpSim, fluxReports,
                     Tuple( plotsToMake[plotkey] ), 12.0, plotkey[4], plotkey[5],
-                    plotname, "svg", plotFunction, plotFunction2 )
+                    plotname, plotFunction, plotFunction2 )
             end  # if makePlot
 
             if makeReport

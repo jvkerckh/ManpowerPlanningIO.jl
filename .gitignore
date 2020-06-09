@@ -25,7 +25,7 @@ Manifest.toml
 
 src/unprocessed*
 test/default*
-test/base/baseConfig/*
+test/base/baseConfig*/simDB.sqlite
 test/report/*.xlsx
 test/plot/*.svg
 test/excelrequest/plotRequest/*.svg

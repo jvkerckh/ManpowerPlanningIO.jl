@@ -7,7 +7,7 @@ function generatePopPlot( popReport::DataFrame, timeFactor::Float64,
     labels = hcat( string.( names( popReport )[2:end] )... )
     ymax = max( maximum( plotData ), 20 )
 
-    plt = plot( popReport[:, :timePoint] / timeFactor, plotData,
+    plt = plot( popReport[:, :timePoint] / timeFactor, plotData, show=false,
         size=(960, 540), title=plotTitle, labels=labels, lw=2, ylim=[0, ymax] )
 
     # Show plot if needed.
@@ -38,8 +38,31 @@ end  # generatePopPlot( popReport, timeFactor, showPlot, savePlot, filename )
 
 function generateEvolutionPlot( popReport::DataFrame, mpSim::MPsim,
     fluxReports::Dict{String,Tuple}, nodes::NTuple{N,String},
-    timeFactor::Float64, showPlot::Bool, savePlot::Bool, fileroot::String,
-    extension::String, plotFunction::Function, plotFunction2::Function ) where N
+    timeFactor::Float64, showPlot::Bool, savePlot::Bool, filename::String,
+    plotFunction::Function, plotFunction2::Function ) where N
+
+    fileroot = nothing
+    extension = nothing
+
+    # Get file name ready.
+    if savePlot
+        # If the user doesn't specify a filename, a random one is generated.
+        if filename == ""
+            dateStr = Dates.format( now(), "yyyymmdd HHMMSS" )
+            fileroot = string( "Population evolution plot (", dateStr, ") of " )
+            extension = "svg"
+        else
+            extension = split( filename, "." )
+            fileroot = length( extension ) == 1 ? string( extension[1] ) :
+                join( extension[1:(end - 1)], "." )
+            extension = length( extension ) == 1 ? "" : extension[end]
+            extension = extension ∈ extensions ? extension : "svg"
+        end  # if filename == ""
+
+        if !ispath( dirname( fileroot ) )
+            mkpath( dirname( fileroot ) )
+        end  # if !ispath( dirname( fileroot ) )
+    end  # if savePlot
 
     timePoints = popReport[:, :timePoint] / timeFactor
 
@@ -64,7 +87,7 @@ function generateEvolutionPlot( popReport::DataFrame, mpSim::MPsim,
 
         # Plots.
         plotTitle = string( "Node population plot" )
-        popPlot = plot( timePoints, plotData, title=plotTitle,
+        popPlot = plot( timePoints, plotData, title=plotTitle, show=false,
             labels=["population" "in flux" "out flux" "net flux"],
             color=[:black :green :red :blue], lw=2,
             ylim=[ymin, ymax] )
@@ -84,14 +107,14 @@ function generateEvolutionPlot( popReport::DataFrame, mpSim::MPsim,
                 grid( 1, 3 )
             ]
             plt = plot( popPlot, compPlot, inFluxPlot, outFluxPlot,
-                withinFluxPlot, size=(1440, 960), layout=layout )
+                withinFluxPlot, show=false, size=(1440, 960), layout=layout )
         else
             layout = @layout [
                 a{0.5625h}
                 grid( 1, 2 )
             ]
-            plt = plot( popPlot, inFluxPlot, outFluxPlot, size=(960, 960),
-                layout=layout )
+            plt = plot( popPlot, inFluxPlot, outFluxPlot, show=false, 
+                size=(960, 960), layout=layout )
         end  # if haskey( mpSim.compoundNodeList, node )
 
         # Show plot if needed.
